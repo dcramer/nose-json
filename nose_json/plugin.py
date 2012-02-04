@@ -6,7 +6,6 @@ nose_json.plugin
 :license: BSD
 """
 import codecs
-import inspect
 import simplejson
 import traceback
 from time import time
@@ -79,7 +78,7 @@ class JsonReportPlugin(Plugin):
         tb = ''.join(traceback.format_exception(*err))
         id = test.id()
         self.results.append({
-            'classname': id_split(id)[0],
+            'classname': ':'.join(id_split(id)[0].rsplit('.', 1)),
             'name': id_split(id)[-1],
             'time': taken,
             'type': type,
@@ -94,7 +93,7 @@ class JsonReportPlugin(Plugin):
         self.stats['failures'] += 1
         id = test.id()
         self.results.append({
-            'classname': id_split(id)[0],
+            'classname': ':'.join(id_split(id)[0].rsplit('.', 1)),
             'name': id_split(id)[-1],
             'time': taken,
             'type': 'failure',
@@ -108,7 +107,7 @@ class JsonReportPlugin(Plugin):
         self.stats['passes'] += 1
         id = test.id()
         self.results.append({
-            'classname': id_split(id)[0],
+            'classname': ':'.join(id_split(id)[0].rsplit('.', 1)),
             'name': id_split(id)[-1],
             'time': taken,
             'type': 'success',
