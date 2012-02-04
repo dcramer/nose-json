@@ -1,10 +1,19 @@
+"""
+nose_json.plugin
+~~~~~~~~~~~~~~~~
+
+:copyright: 2012 DISQUS.
+:license: BSD
+"""
 import codecs
+import inspect
 import simplejson
 import traceback
 from time import time
 from nose.exc import SkipTest
 from nose.plugins import Plugin
 from nose.plugins.xunit import id_split, nice_classname, exc_message
+
 
 class JsonReportPlugin(Plugin):
     name = 'json'
@@ -16,7 +25,7 @@ class JsonReportPlugin(Plugin):
             taken = time() - self._timer
         else:
             # test died before it ran (probably error in setup())
-            # or success/failure added before test started probably 
+            # or success/failure added before test started probably
             # due to custom TestResult munging
             taken = 0.0
         return taken
@@ -43,11 +52,12 @@ class JsonReportPlugin(Plugin):
             self.results = []
             self.report_file = codecs.open(options.json_file, 'w',
                                            self.encoding, 'replace')
+
     def report(self, stream):
         self.stats['encoding'] = self.encoding
         self.stats['total'] = (self.stats['errors'] + self.stats['failures']
                                + self.stats['passes'] + self.stats['skipped'])
-        
+
         self.report_file.write(simplejson.dumps({
             'stats': self.stats,
             'results': self.results,
@@ -71,6 +81,7 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
+            'filename': inspect.getfile(test),
             'time': taken,
             'type': type,
             'errtype': nice_classname(err[0]),
@@ -86,6 +97,7 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
+            'filename': inspect.getfile(test),
             'time': taken,
             'type': 'failure',
             'errtype': nice_classname(err[0]),
@@ -100,6 +112,7 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
+            'filename': inspect.getfile(test),
             'time': taken,
             'type': 'success',
         })
