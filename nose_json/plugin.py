@@ -81,7 +81,6 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
-            'filename': inspect.getfile(test),
             'time': taken,
             'type': type,
             'errtype': nice_classname(err[0]),
@@ -97,7 +96,6 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
-            'filename': inspect.getfile(test),
             'time': taken,
             'type': 'failure',
             'errtype': nice_classname(err[0]),
@@ -112,7 +110,6 @@ class JsonReportPlugin(Plugin):
         self.results.append({
             'classname': id_split(id)[0],
             'name': id_split(id)[-1],
-            'filename': inspect.getfile(test),
             'time': taken,
             'type': 'success',
         })
