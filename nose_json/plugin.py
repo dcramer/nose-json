@@ -43,24 +43,29 @@ class JsonReportPlugin(Plugin):
     def configure(self, options, config):
         Plugin.configure(self, options, config)
         self.config = config
-        if self.enabled:
-            self.stats = {'errors': 0,
-                          'failures': 0,
-                          'passes': 0,
-                          'skipped': 0
-                          }
-            self.results = []
-            self.report_file = codecs.open(options.json_file, 'w',
-                                           self.encoding, 'replace')
+        if not self.enabled:
+            return
+
+        self.stats = {'errors': 0,
+                      'failures': 0,
+                      'passes': 0,
+                      'skipped': 0
+                      }
+        self.results = []
+
+        report_output = options.json_file
+
+        path = os.path.dirname(report_output)
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        self.report_file = codecs.open(report_output, 'w',
+                                       self.encoding, 'replace')
 
     def report(self, stream):
         self.stats['encoding'] = self.encoding
         self.stats['total'] = (self.stats['errors'] + self.stats['failures']
                                + self.stats['passes'] + self.stats['skipped'])
-
-        path = os.path.dirname(self.report_file)
-        if not os.path.exists(path):
-            os.makedirs(path)
 
         self.report_file.write(simplejson.dumps({
             'stats': self.stats,
