@@ -6,6 +6,7 @@ nose_json.plugin
 :license: BSD
 """
 import codecs
+import os
 import simplejson
 import traceback
 from time import time
@@ -56,6 +57,10 @@ class JsonReportPlugin(Plugin):
         self.stats['encoding'] = self.encoding
         self.stats['total'] = (self.stats['errors'] + self.stats['failures']
                                + self.stats['passes'] + self.stats['skipped'])
+
+        path = os.path.dirname(self.report_file)
+        if not os.path.exists(path):
+            os.makedirs(path)
 
         self.report_file.write(simplejson.dumps({
             'stats': self.stats,
