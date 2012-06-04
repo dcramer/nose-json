@@ -59,19 +59,18 @@ class JsonReportPlugin(Plugin):
         if not os.path.exists(path):
             os.makedirs(path)
 
-        self.report_file = codecs.open(report_output, 'w',
-                                       self.encoding, 'replace')
+        self.report_output = report_output
 
     def report(self, stream):
         self.stats['encoding'] = self.encoding
         self.stats['total'] = (self.stats['errors'] + self.stats['failures']
                                + self.stats['passes'] + self.stats['skipped'])
 
-        self.report_file.write(simplejson.dumps({
-            'stats': self.stats,
-            'results': self.results,
-        }))
-        self.report_file.close()
+        with codecs.open(self.report_output, 'w', self.encoding, 'replace') as fp:
+            fp.write(simplejson.dumps({
+                'stats': self.stats,
+                'results': self.results,
+            }))
 
     def startTest(self, test):
         self._timer = time()

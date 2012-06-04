@@ -7,7 +7,7 @@ tests_require = [
 
 setup(
     name='nose-json',
-    version='0.2.3',
+    version='0.2.4',
     author='David Cramer',
     author_email='dcramer@gmail.com',
     description='A JSON report plugin for Nose.',
