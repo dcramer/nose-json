@@ -20,7 +20,7 @@ class JsonReportPlugin(Plugin):
     score = 2000
     encoding = 'UTF-8'
 
-    def _timeTaken(self):
+    def _get_time_taken(self):
         if hasattr(self, '_timer'):
             taken = time() - self._timer
         else:
@@ -46,16 +46,17 @@ class JsonReportPlugin(Plugin):
         if not self.enabled:
             return
 
-        self.stats = {'errors': 0,
-                      'failures': 0,
-                      'passes': 0,
-                      'skipped': 0
-                      }
+        self.stats = {
+            'errors': 0,
+            'failures': 0,
+            'passes': 0,
+            'skipped': 0,
+        }
         self.results = []
 
         report_output = options.json_file
 
-        path = os.path.dirname(report_output)
+        path = os.path.realpath(os.path.dirname(report_output))
         if not os.path.exists(path):
             os.makedirs(path)
 
@@ -76,7 +77,7 @@ class JsonReportPlugin(Plugin):
         self._timer = time()
 
     def addError(self, test, err, capt=None):
-        taken = self._timeTaken()
+        taken = self._get_time_taken()
 
         if issubclass(err[0], SkipTest):
             type = 'skipped'
@@ -97,7 +98,7 @@ class JsonReportPlugin(Plugin):
         })
 
     def addFailure(self, test, err, capt=None, tb_info=None):
-        taken = self._timeTaken()
+        taken = self._get_time_taken()
         tb = ''.join(traceback.format_exception(*err))
         self.stats['failures'] += 1
         id = test.id()
@@ -112,7 +113,7 @@ class JsonReportPlugin(Plugin):
         })
 
     def addSuccess(self, test, capt=None):
-        taken = self._timeTaken()
+        taken = self._get_time_taken()
         self.stats['passes'] += 1
         id = test.id()
         self.results.append({
